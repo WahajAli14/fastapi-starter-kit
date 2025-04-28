@@ -1,0 +1,60 @@
+services:
+  fastapi_app:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: fastapi_app
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - rabbitmq-2
+
+  worker-service:
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
+    container_name: worker-service
+    env_file:
+      - .env
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq-2: 
+        condition: service_healthy
+      
+
+  rabbitmq-2:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-2
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:  
+  mongo_data:
+    driver: local
+          

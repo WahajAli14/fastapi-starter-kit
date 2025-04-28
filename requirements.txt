@@ -1,8 +1,11 @@
 fastapi
+fastapi-cli
 uvicorn
 motor
 pydantic
+pydantic[email]  
 pymongo
 python-dotenv
 python-jose[cryptography]
 passlib[bcrypt]
+pika

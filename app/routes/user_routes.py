@@ -10,7 +10,7 @@ def fetch_user_ids():
 
 @router.delete("/users/{user_id}")
 def delete_user(user_id: str, _: dict = Depends(JWTBearer(["admin"]))): 
-    # Assuming you have a function to delete a user by ID
+    
     if delete_user_by_id(user_id):
         return {"message": "User deleted successfully"}
     else:

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from typing import Dict
 from routes.user_routes import router as user_router
 from routes.item_routes import router as item_router
+from routes.rabbitmq_routes import router as rabbitmq_router
 from auth.auth_routes import auth_router
 import uvicorn
 
@@ -9,6 +10,7 @@ app = FastAPI()
 app.include_router(item_router)
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(user_router, tags=["users"])
+app.include_router(rabbitmq_router,tags=["rabbitmq"])
 
 @app.get("/")
 def read_root() -> Dict[str, str]:
