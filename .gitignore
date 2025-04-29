@@ -38,3 +38,5 @@ build/
 
 # PEP 582; used by python projects
 __pypackages__/
+
+generated_pdfs
