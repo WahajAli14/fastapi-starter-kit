@@ -8,9 +8,12 @@ services:
       - "8001:8000"
     env_file:
       - .env
+    volumes:
+      - ./app:/app
     depends_on:
       - mongo
       - rabbitmq-2
+    command: ["fastapi", "dev", "main.py", "--port", "8000"]
 
   worker-service:
     build:
@@ -19,11 +22,14 @@ services:
     container_name: worker-service
     env_file:
       - .env
+    volumes:
+      - ./worker:/worker
     depends_on:
       mongo:
         condition: service_healthy
       rabbitmq-2: 
         condition: service_healthy
+    command: ["python", "worker_main.py"]    
       
 
   rabbitmq-2:
