@@ -10,3 +10,8 @@ python-jose[cryptography]
 passlib[bcrypt]
 pika
 fpdf==1.7.2
+pre-commit == 3.7.0
+black==24.3.0
+flake8==6.1.0
+flake8-django
+isort==5.13.2

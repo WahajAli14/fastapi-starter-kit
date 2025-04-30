@@ -1,0 +1,13 @@
+[flake8]
+max-line-length = 88
+exlude =
+    .git,
+    __pycache__,
+    .venv,
+    .env,
+    .idea,
+    .vscode,
+    .pytest_cache,
+    build
+
+ignore = F401
