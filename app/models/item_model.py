@@ -1,24 +1,28 @@
 from datetime import timezone
+
 from datasbase import db
 
 collection = db["items"]
 
-def create_item(item, owner : str):
+
+def create_item(item, owner: str):
     item["id"] = get_next_id()
     item["created_at"] = timezone.utc
     item["owner"] = owner
     item["views"] = 0
     item["likes"] = 0
-    item["status"] = "pending_reviews" 
+    item["status"] = "pending_reviews"
     result = collection.insert_one(item)
     return str(result.inserted_id), item["id"]
 
+
 def get_item_owner(item_id: int) -> str | None:
-    item = collection.find_one({"id": item_id}, {"owner": 1,"_id": 0})
+    item = collection.find_one({"id": item_id}, {"owner": 1, "_id": 0})
     return item["owner"] if item else None
 
-def get_item(item_id : int):
-    item = collection.find_one({"id": item_id }, {"_id": 0})
+
+def get_item(item_id: int):
+    item = collection.find_one({"id": item_id}, {"_id": 0})
     if item:
         return item
     else:
@@ -30,7 +34,7 @@ def get_all_items():
     return items
 
 
-def search_items(q: dict = {}, limit:int =10 , skip:int = 0):
+def search_items(q: dict = {}, limit: int = 10, skip: int = 0):
     return list(collection.find(q, {"_id": 0}).skip(skip).limit(limit))
 
 
@@ -40,7 +44,7 @@ def get_next_id():
         {"_id": "itemid"},
         {"$inc": {"sequence_value": 1}},
         upsert=True,
-        return_document=True
+        return_document=True,
     )
     return result["sequence_value"]
 
@@ -69,11 +73,8 @@ def change_item_status(ad_id: int, status: str):
 
     update_fields = {
         "status": status,
-        "is_active": False if status in inactive_statuses else True
+        "is_active": False if status in inactive_statuses else True,
     }
 
-    result = collection.update_one(
-        {"id": ad_id},
-        {"$set": update_fields}
-    )
+    result = collection.update_one({"id": ad_id}, {"$set": update_fields})
     return result.modified_count > 0

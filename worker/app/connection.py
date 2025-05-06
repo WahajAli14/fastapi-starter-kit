@@ -1,5 +1,6 @@
 import pika
 
+
 class RabbitMQConnection:
     def __init__(self, host: str = "rabbitmq-2"):
         self.host = host
@@ -7,7 +8,9 @@ class RabbitMQConnection:
         self.channel = None
 
     def connect(self):
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host))
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host=self.host)
+        )
         self.channel = self.connection.channel()
         return self.channel
 

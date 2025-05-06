@@ -1,15 +1,22 @@
-from fastapi import APIRouter, HTTPException, Depends
-from schema.item_schema import Item
-from models.user_model import check_if_user_saved, remove_saved_item, save_item_for_user
-#from models.item_model import create_item, get_item, get_all_items, delete_item, get_item_owner, search_items, update_item, like_item,change_item_status
-from models.item_model import (
-    create_item, get_item, get_all_items, delete_item, get_item_owner,
-    search_items, update_item, like_item, change_item_status
-)
 from auth.jwt_bearer import JWTBearer
+from fastapi import APIRouter, Depends, HTTPException
+from models.item_model import (
+    change_item_status,
+    create_item,
+    delete_item,
+    get_all_items,
+    get_item,
+    get_item_owner,
+    like_item,
+    search_items,
+    update_item,
+)
+from models.user_model import check_if_user_saved, remove_saved_item, save_item_for_user
+from schema.item_schema import Item
 from utils.permissions import require_owner_or_admin
 
 router = APIRouter()
+
 
 @router.post("/items/create", response_model=Item)
 def add_item(item: Item, owner: dict = Depends(JWTBearer(["employee"]))):
@@ -24,8 +31,11 @@ def list_items(_: dict = Depends(JWTBearer(["employee", "user", "admin"]))):
 
 @router.get("/items/search")
 def search_items_route(
-    q: str = "", category: str = "", limit: int = 10, skip: int = 0,
-    _: dict = Depends(JWTBearer(["employee", "user", "admin"]))
+    q: str = "",
+    category: str = "",
+    limit: int = 10,
+    skip: int = 0,
+    _: dict = Depends(JWTBearer(["employee", "user", "admin"])),
 ):
     query = {}
     if q:
@@ -52,7 +62,7 @@ async def update_ad(item_id: int, updated_data: dict):
 
 
 @router.delete("/items/{item_id}")
-#@require_owner_or_admin(get_owner_func=get_item_owner)
+# @require_owner_or_admin(get_owner_func=get_item_owner)
 async def delete_ad(item_id: int):
     if delete_item(item_id):
         return {"message": "Item deleted"}
@@ -60,7 +70,9 @@ async def delete_ad(item_id: int):
 
 
 @router.post("/items/{item_id}/like")
-def like_item_route(item_id: int, user: dict = Depends(JWTBearer(["employee", "user", "admin"]))):
+def like_item_route(
+    item_id: int, user: dict = Depends(JWTBearer(["employee", "user", "admin"]))
+):
     if like_item(item_id):
         return {"message": "Item liked"}
     raise HTTPException(status_code=404, detail="Item not found")
@@ -74,14 +86,18 @@ def save_item_route(item_id: int, user: dict = Depends(JWTBearer(["user", "admin
 
 
 @router.delete("/items/{item_id}/save")
-def remove_saved_item_route(item_id: int, user: dict = Depends(JWTBearer(["user", "admin"]))):
+def remove_saved_item_route(
+    item_id: int, user: dict = Depends(JWTBearer(["user", "admin"]))
+):
     saved_by_user = check_if_user_saved(user["username"], item_id)
     if not saved_by_user:
-        raise HTTPException(status_code=403, detail="You cannot unsave an ad you haven't saved")
+        raise HTTPException(
+            status_code=403, detail="You cannot unsave an ad you haven't saved"
+        )
 
     if remove_saved_item(user["username"], item_id):
         return {"message": "Item removed from saved"}
-    
+
     raise HTTPException(status_code=404, detail="Item not found")
 
 
@@ -89,8 +105,9 @@ def remove_saved_item_route(item_id: int, user: dict = Depends(JWTBearer(["user"
 def set_status(item_id: int, status: str, user: dict = Depends(JWTBearer(["admin"]))):
     valid_statuses = ["approved", "pending_review", "sold", "flagged"]
     if status not in valid_statuses:
-        raise HTTPException(status_code=400, detail=f"Invalid status. Allowed: {', '.join(valid_statuses)}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid status. Allowed: {', '.join(valid_statuses)}",
+        )
     change_item_status(item_id, status)
     return {"message": f"Ad status set to {status}"}
-
-

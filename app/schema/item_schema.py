@@ -1,5 +1,7 @@
 from datetime import datetime
+
 from pydantic import BaseModel
+
 
 class Item(BaseModel):
     name: str
@@ -8,8 +10,7 @@ class Item(BaseModel):
     category: str | None
     is_active: bool = True
     created_at: datetime | None = None
-    owner : str | None = None
-    views : int = 0
-    likes : int = 0
-    status : str = "pending_reviews"
-
+    owner: str | None = None
+    views: int = 0
+    likes: int = 0
+    status: str = "pending_reviews"

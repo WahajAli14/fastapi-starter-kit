@@ -1,6 +1,7 @@
 from app.connection import RabbitMQConnection
 from app.dispatcher import dispatch_task
 
+
 class WorkerConsumer:
     def __init__(self, queue_name: str = "printing_tasks"):
         self.queue_name = queue_name

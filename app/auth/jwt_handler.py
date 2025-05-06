@@ -1,14 +1,16 @@
-from datetime import datetime, timedelta, timezone
-from jose import jwt 
-from dotenv import load_dotenv
 import os
+from datetime import datetime, timedelta, timezone
 
-load_dotenv()  
+from dotenv import load_dotenv
+from jose import jwt
 
-SECRET_KEY = os.getenv("SECRET_KEY", 'None')
-ALGORITHM = os.getenv("ALGORITHM", 'HS256')
+load_dotenv()
 
-def create_access_token(data: dict, expires_delta: timedelta= timedelta(minutes=30)):
+SECRET_KEY = os.getenv("SECRET_KEY", "None")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+
+
+def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes=30)):
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
@@ -16,7 +18,7 @@ def create_access_token(data: dict, expires_delta: timedelta= timedelta(minutes=
     return encoded_jwt
 
 
-def create_refresh_token(data: dict, expires_delta: timedelta= timedelta(days=7)):
+def create_refresh_token(data: dict, expires_delta: timedelta = timedelta(days=7)):
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
@@ -28,5 +30,6 @@ def decode_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
-    except :
+    except Exception as e:
+        print(f"Token decoding error: {e}")
         return None

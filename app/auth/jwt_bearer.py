@@ -1,10 +1,12 @@
-from fastapi import Request, HTTPException
+from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer
-from .jwt_handler import decode_token
 from jose import JWTError
 
+from .jwt_handler import decode_token
+
+
 class JWTBearer(HTTPBearer):
-    def __init__(self, allowed_roles = None):
+    def __init__(self, allowed_roles=None):
         super().__init__()
         self.allowed_roles = allowed_roles
 
@@ -17,9 +19,15 @@ class JWTBearer(HTTPBearer):
                     raise HTTPException(status_code=403, detail="Invalid token")
                 role = payload.get("role")
                 if self.allowed_roles and role not in self.allowed_roles:
-                    raise HTTPException(status_code=403, detail="Not enough permissions")
+                    raise HTTPException(
+                        status_code=403, detail="Not enough permissions"
+                    )
                 return payload
             except JWTError:
-                raise HTTPException(status_code=403, detail="Invalid authentication credentials")
+                raise HTTPException(
+                    status_code=403, detail="Invalid authentication credentials"
+                )
         else:
-            raise HTTPException(status_code=403, detail="Invalid authentication credentials")
+            raise HTTPException(
+                status_code=403, detail="Invalid authentication credentials"
+            )

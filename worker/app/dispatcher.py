@@ -1,7 +1,9 @@
 import json
-from app.tasks.print_tasks import process_printing_task
+
 from app.tasks.email_task import handle_email_task
 from app.tasks.generate_pdf_file import generate_pdf_file
+from app.tasks.print_tasks import process_printing_task
+
 
 def dispatch_task(body):
     data = json.loads(body)

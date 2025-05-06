@@ -60,7 +60,27 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "5433:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+       
 volumes:  
   mongo_data:
     driver: local
+  postgres_data:
+    driver: local
+    
           

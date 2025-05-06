@@ -13,6 +13,16 @@ env/
 # Environment variables
 .env
 
+# Alembic migration files
+*/alembic/versions/
+# Keep core alembic folder structure
+!alembic/env.py
+!alembic/script.py.mako
+!alembic/README
+
+# Alembic ini file (optional, if env-specific)
+alembic.ini
+
 # Scripts folder
 scripts/
 
